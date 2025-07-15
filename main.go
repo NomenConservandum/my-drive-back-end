@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"encoding/json"
 	"io"
-	//"strings"
 )
 
 type User struct {
@@ -23,6 +22,16 @@ func main() {
 	// Define a handler function for the root path "/"
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Hello, you've requested: %s\n", r.URL.Path)
+	})
+	// Checks for the correct API key. Will be modified to do more, like JWT fetching
+	http.HandleFunc("/check", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("Someone's got it!")
+		enableCORS(w)
+		switch r.Method {
+		case http.MethodGet:
+			w.WriteHeader(http.StatusOK)
+			json.NewEncoder(w).Encode("")
+		}
 	})
 	http.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
 		enableCORS(w)
@@ -49,12 +58,10 @@ func main() {
 			}
 			fmt.Printf("Data retrieved: %+v\n", user)
 
-			// Set the header
-			w.WriteHeader(http.StatusCreated) // For POST requests
-			// Encode the data to JSON and write to response
+			
+			w.WriteHeader(http.StatusCreated)
 			json.NewEncoder(w).Encode(user)
 			
-    		//fmt.Fprint(w, "Success")
 			return
 		default:
 			fmt.Println("Got an unappropriate request...\nThe method is: " + r.Method)

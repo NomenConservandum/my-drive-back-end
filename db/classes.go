@@ -4,10 +4,13 @@ import "time"
 
 // TEMPORARY BLOCK START
 const UsersNum = 10
+const FilesNum = 20
 
 var Array [UsersNum]User
 
 var ArrayJWT [UsersNum]Tokens
+
+var ArrayFiles [UsersNum * FilesNum]Metadata
 
 // TEMPORARY BLOCK END
 
@@ -26,9 +29,9 @@ type User struct {
 }
 
 type Metadata struct {
-	ID        string
-	Name      string
-	Owner     string
-	Size      int64
-	CreatedAt time.Time
+	ID        int       `json:"id"`
+	Name      string    `json:"name"`
+	Owner     string    `json:"owner"`
+	Size      int64     `json:"size"`
+	CreatedAt time.Time `json:"time"`
 }

@@ -24,8 +24,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		// TEMPORARY BLOCK START
 		for iter := 0; iter < len(db.Array); iter++ {
 			if user == db.Array[iter] {
-				w.WriteHeader(http.StatusCreated) // 201
-				json.NewEncoder(w).Encode(user)   // returns a user, will return tokens later on. TODO: implement
+				w.WriteHeader(http.StatusCreated)            // 201
+				json.NewEncoder(w).Encode(db.ArrayJWT[iter]) // returns tokens. TODO: implement properly
 				return
 			} else if user.Username == db.Array[iter].Username {
 				Err.Message = "Password Does Not Match"

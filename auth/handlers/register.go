@@ -19,7 +19,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			var errorMessage db.Message
 			errorMessage.Message = err.Error()
 			w.WriteHeader(http.StatusNotAcceptable)
-			Err.Message = "Unappropriate input"
+			Err.Message = "Inappropriate input"
 			json.NewEncoder(w).Encode(Err)
 		}
 		// fmt.Printf("Data retrieved: %+v\n", user)
@@ -31,10 +31,13 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusForbidden) // 403
 				json.NewEncoder(w).Encode(Err)
 				return
-			} else if db.Array[iter].Username == "" {
+			} else if db.Array[iter].Username == "" { // this is stupid, but temporary
 				db.Array[iter] = user
-				w.WriteHeader(http.StatusCreated) // 201
-				json.NewEncoder(w).Encode(user)   // returns a user, will return tokens later on. TODO: implement
+				db.ArrayJWT[iter].Access = user.Username
+				db.ArrayJWT[iter].Refresh = user.Password
+
+				w.WriteHeader(http.StatusCreated)            // 201
+				json.NewEncoder(w).Encode(db.ArrayJWT[iter]) // returns tokens. TODO: implement properly
 				return
 			}
 		}

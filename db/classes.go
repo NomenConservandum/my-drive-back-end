@@ -1,7 +1,13 @@
 package db
 
+import "time"
+
 // TEMPORARY BLOCK START
-var Array [10]User
+const UsersNum = 10
+
+var Array [UsersNum]User
+
+var ArrayJWT [UsersNum]Tokens
 
 // TEMPORARY BLOCK END
 
@@ -20,5 +26,9 @@ type User struct {
 }
 
 type Metadata struct {
-	//
+	ID        string
+	Name      string
+	Owner     string
+	Size      int64
+	CreatedAt time.Time
 }

@@ -1,6 +1,10 @@
 package middleware
 
-import "net/http"
+import (
+	"encoding/json"
+	"myDrive/auth"
+	"net/http"
+)
 
 func CorsMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -22,8 +26,12 @@ func CorsMiddleware(next http.HandlerFunc) http.HandlerFunc {
 
 func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Verify JWT token
-		next.ServeHTTP(w, r)
+		if auth.IsValidAccess(r.Header["Authorization"][0]) {
+			next.ServeHTTP(w, r)
+		} else {
+			w.WriteHeader(http.StatusForbidden)
+			json.NewEncoder(w).Encode("")
+		}
 	})
 }
 

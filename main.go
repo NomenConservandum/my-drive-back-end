@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"myDrive/auth/handlers"
+	authhandlers "myDrive/auth/handlers"
 	"myDrive/auth/middleware"
+	filehandlers "myDrive/files/handlers"
 	"net/http"
 )
 
@@ -14,9 +15,12 @@ func main() {
 	})
 
 	// auth handlers
-	http.HandleFunc("/check", middleware.CorsMiddleware(handlers.CheckHandler))
-	http.HandleFunc("/register", middleware.CorsMiddleware(handlers.RegisterHandler))
-	http.HandleFunc("/login", middleware.CorsMiddleware(handlers.LoginHandler))
+	http.HandleFunc("/check", middleware.CorsMiddleware(authhandlers.CheckHandler))
+	http.HandleFunc("/register", middleware.CorsMiddleware(authhandlers.RegisterHandler))
+	http.HandleFunc("/login", middleware.CorsMiddleware(authhandlers.LoginHandler))
+
+	// file handlers
+	http.HandleFunc("/upload", middleware.CorsMiddleware(filehandlers.UploadHandler))
 
 	// Start the server on port 8080
 	fmt.Println("Server listening on port 8080...")

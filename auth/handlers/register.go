@@ -1,4 +1,4 @@
-package handlers
+package authhandlers
 
 import (
 	"encoding/json"
@@ -12,15 +12,17 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPost:
 		defer r.Body.Close()
 		user, err := utils.JsonToUser(r)
+
+		var Err db.Message
+
 		if err != nil {
-			var errorMessage db.Error
+			var errorMessage db.Message
 			errorMessage.Message = err.Error()
 			w.WriteHeader(http.StatusNotAcceptable)
-			json.NewEncoder(w).Encode(user)
+			Err.Message = "Unappropriate input"
+			json.NewEncoder(w).Encode(Err)
 		}
 		// fmt.Printf("Data retrieved: %+v\n", user)
-
-		var Err db.Error
 
 		// TEMPORARY BLOCK START
 		for iter := 0; iter < len(db.Array); iter++ {

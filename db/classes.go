@@ -5,7 +5,7 @@ var Array [10]User
 
 // TEMPORARY BLOCK END
 
-type Error struct {
+type Message struct {
 	Message string `json:"message"`
 }
 

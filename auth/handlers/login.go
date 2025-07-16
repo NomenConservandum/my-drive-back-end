@@ -1,4 +1,4 @@
-package handlers
+package authhandlers
 
 import (
 	"encoding/json"
@@ -13,13 +13,13 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
 		user, err := utils.JsonToUser(r)
 		if err != nil {
-			var errorMessage db.Error
+			var errorMessage db.Message
 			errorMessage.Message = err.Error()
 			w.WriteHeader(http.StatusNotAcceptable)
 			json.NewEncoder(w).Encode(user)
 		}
 
-		var Err db.Error
+		var Err db.Message
 
 		// TEMPORARY BLOCK START
 		for iter := 0; iter < len(db.Array); iter++ {

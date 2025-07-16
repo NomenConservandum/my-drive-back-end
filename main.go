@@ -2,72 +2,21 @@ package main
 
 import (
 	"fmt"
+	"myDrive/auth/handlers"
+	"myDrive/auth/middleware"
 	"net/http"
-	"encoding/json"
-	"io"
 )
-
-type User struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
-
-func enableCORS(w http.ResponseWriter) {
-    w.Header().Set("Access-Control-Allow-Origin", "*")
-    w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-    w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-}
 
 func main() {
 	// Define a handler function for the root path "/"
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Hello, you've requested: %s\n", r.URL.Path)
 	})
-	// Checks for the correct API key. Will be modified to do more, like JWT fetching
-	http.HandleFunc("/check", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Someone's got it!")
-		enableCORS(w)
-		switch r.Method {
-		case http.MethodGet:
-			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode("")
-		}
-	})
-	http.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
-		enableCORS(w)
-		switch r.Method {
-		case http.MethodPost:
-			defer r.Body.Close()
 
-			var user User
-
-			bodyBytes, err := io.ReadAll(r.Body)
-			if err != nil {
-				http.Error(w, "Error reading request body", http.StatusBadRequest)
-				return
-			}
-			
-			// Convert bytes to string
-			bodyString := string(bodyBytes)
-			fmt.Println("Parsed JSON: " + bodyString)
-
-			err = json.Unmarshal([]byte(bodyString), &user)
-			if err != nil {
-				fmt.Printf("Error parsing JSON: %v\n", err)
-				return
-			}
-			fmt.Printf("Data retrieved: %+v\n", user)
-
-			
-			w.WriteHeader(http.StatusCreated)
-			json.NewEncoder(w).Encode(user)
-			
-			return
-		default:
-			fmt.Println("Got an unappropriate request...\nThe method is: " + r.Method)
-			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		}
-	})
+	// auth handlers
+	http.HandleFunc("/check", middleware.CorsMiddleware(handlers.CheckHandler))
+	http.HandleFunc("/register", middleware.CorsMiddleware(handlers.RegisterHandler))
+	http.HandleFunc("/login", middleware.CorsMiddleware(handlers.LoginHandler))
 
 	// Start the server on port 8080
 	fmt.Println("Server listening on port 8080...")

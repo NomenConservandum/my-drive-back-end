@@ -21,14 +21,14 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 		username := utils.GetUserFromRequest(r).Username
 		uploadPath := uploadBasePath + username
 
-		var Err db.Message
+		var Text db.Message
 
 		// Limit upload size
 		r.Body = http.MaxBytesReader(w, r.Body, maxUploadSize)
 		if err := r.ParseMultipartForm(maxUploadSize); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			Err.Message = "Inappropriate input"
-			json.NewEncoder(w).Encode(Err)
+			Text.Message = "Inappropriate input"
+			json.NewEncoder(w).Encode(Text)
 			return
 		}
 
@@ -36,8 +36,8 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 		file, handler, err := r.FormFile("file")
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			Err.Message = "Invalid file"
-			json.NewEncoder(w).Encode(Err)
+			Text.Message = "Invalid file"
+			json.NewEncoder(w).Encode(Text)
 			return
 		}
 		defer file.Close()
@@ -45,8 +45,8 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 		// Create upload directory if not exists
 		if err := os.MkdirAll(uploadPath, os.ModePerm); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			Err.Message = "Server error"
-			json.NewEncoder(w).Encode(Err)
+			Text.Message = "Server error"
+			json.NewEncoder(w).Encode(Text)
 			return
 		}
 
@@ -55,8 +55,8 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 		dst, err := os.Create(dstPath)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			Err.Message = "Server error"
-			json.NewEncoder(w).Encode(Err)
+			Text.Message = "Server error"
+			json.NewEncoder(w).Encode(Text)
 			return
 		}
 		defer dst.Close()
@@ -64,12 +64,13 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 		// Copy file to destination
 		if _, err := io.Copy(dst, file); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			Err.Message = "Server error"
-			json.NewEncoder(w).Encode(Err)
+			Text.Message = "Server error"
+			json.NewEncoder(w).Encode(Text)
 			return
 		}
 
 		// add file metadata to the db
+		// TEMPORARY. TODO: change.
 		for iter := 0; iter < db.UsersNum*db.FilesNum; iter++ {
 			if db.ArrayFiles[iter].Name == "" {
 				db.ArrayFiles[iter].ID = iter
@@ -81,9 +82,10 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		var text db.Message // TODO: remove and rename Err
-		text.Message = "File " + handler.Filename + " uploaded successfully"
+		// TEMPORARY. TODO: change.
+
+		Text.Message = "File " + handler.Filename + " uploaded successfully"
 		w.WriteHeader(http.StatusCreated) // 201
-		json.NewEncoder(w).Encode(text)
+		json.NewEncoder(w).Encode(Text)
 	}
 }

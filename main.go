@@ -27,7 +27,8 @@ func main() {
 		middleware.AuthMiddleware(filehandlers.UploadHandler)))
 	http.HandleFunc("/files", middleware.CorsMiddleware(
 		middleware.AuthMiddleware(filehandlers.GetFilesHandler)))
-
+	http.HandleFunc("/files/{id}", middleware.CorsMiddleware(
+		middleware.AuthMiddleware(filehandlers.FileManipulationHandler)))
 	// Start the server on port 8080
 	fmt.Println("Server listening on port 8080...")
 	http.ListenAndServe(":8080", nil)

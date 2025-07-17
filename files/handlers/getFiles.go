@@ -18,7 +18,7 @@ func GetFilesHandler(w http.ResponseWriter, r *http.Request) {
 		// add file metadata to the db
 		for iter := 0; iter < db.UsersNum*db.FilesNum; iter++ {
 			if db.ArrayFiles[iter].Owner == username {
-				println(db.ArrayFiles[iter].Name + " is owned by " + db.ArrayFiles[iter].Owner)
+				//println(db.ArrayFiles[iter].Name + " is owned by " + db.ArrayFiles[iter].Owner)
 				files = append(files, db.ArrayFiles[iter])
 			}
 		}
